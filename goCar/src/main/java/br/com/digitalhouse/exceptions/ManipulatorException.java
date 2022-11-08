@@ -13,9 +13,9 @@ import java.time.Instant;
 @ControllerAdvice
 public class ManipulatorException {
     @ExceptionHandler(EntityCarNotFoundException.class)
-    public ResponseEntity<ErrorCar> entityNotFound(EntityCarNotFoundException e, HttpServletRequest request){
+    public ResponseEntity<ErrorProduct> entityNotFound(EntityCarNotFoundException e, HttpServletRequest request){
         HttpStatus status = HttpStatus.NOT_FOUND;
-        ErrorCar error = new ErrorCar();
+        ErrorProduct error = new ErrorProduct();
         error.setTimestamp(Instant.now());
         error.setStatus(status.value());
         error.setError("Registro Não Encontrado!");
@@ -25,9 +25,9 @@ public class ManipulatorException {
     }
 
     @ExceptionHandler(DatabaseCarException.class)
-    public ResponseEntity<ErrorCar> integrityViolation(DatabaseCarException e, HttpServletRequest request){
+    public ResponseEntity<ErrorProduct> integrityViolation(DatabaseCarException e, HttpServletRequest request){
         HttpStatus status = HttpStatus.BAD_REQUEST;
-        ErrorCar error = new ErrorCar();
+        ErrorProduct error = new ErrorProduct();
         error.setTimestamp(Instant.now());
         error.setStatus(status.value());
         error.setError("Violação de Integridade (Chave Estrangeira)!");

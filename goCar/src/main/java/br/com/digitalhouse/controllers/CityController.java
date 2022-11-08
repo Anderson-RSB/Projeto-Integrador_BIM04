@@ -20,28 +20,28 @@ public class CityController {
 
     @GetMapping
     public ResponseEntity<List<CityDto>> searchAllCities() {
-        List<CityDto> list = cityService.searchAll();
-        return ResponseEntity.ok().body(list);
+        List<CityDto> cityDtoList = cityService.searchAll();
+        return ResponseEntity.ok().body(cityDtoList);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<CityDto> searchCityById(@PathVariable Integer id) {
-        CityDto dto = cityService.searchById(id);
-        return ResponseEntity.ok().body(dto);
+        CityDto cityDto = cityService.searchById(id);
+        return ResponseEntity.ok().body(cityDto);
     }
 
     @PostMapping
-    public ResponseEntity<CityDto> insertCity(@RequestBody CityDto dto) {
-        dto = cityService.insert(dto);
+    public ResponseEntity<CityDto> insertCity(@RequestBody CityDto cityDto) {
+        cityDto = cityService.insert(cityDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dto.getId()).toUri();
-        return ResponseEntity.created(uri).body(dto);
+                .buildAndExpand(cityDto.getId()).toUri();
+        return ResponseEntity.created(uri).body(cityDto);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CityDto> updateCity(@PathVariable Integer id, @RequestBody CityDto dto) {
-        dto = cityService.update(id, dto);
-        return ResponseEntity.ok().body(dto);
+    public ResponseEntity<CityDto> updateCity(@PathVariable Integer id, @RequestBody CityDto cityDto) {
+        cityDto = cityService.update(id, cityDto);
+        return ResponseEntity.ok().body(cityDto);
     }
 
     @DeleteMapping(value = "/{id}")

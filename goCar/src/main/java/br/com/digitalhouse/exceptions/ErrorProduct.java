@@ -3,17 +3,17 @@ package br.com.digitalhouse.exceptions;
 import java.io.Serializable;
 import java.time.Instant;
 
-public class ErrorCar implements Serializable {
+public class ErrorProduct implements Serializable {
     public static final long serialVersionUID = 1L;
 
     private Instant timestamp;
     private Integer Status;
     private String error;
     private String msg;
-    //caminho
+    // Caminho
     private String link;
 
-    public ErrorCar() {
+    public ErrorProduct() {
     }
 
     public Instant getTimestamp() {
@@ -55,4 +55,5 @@ public class ErrorCar implements Serializable {
     public void setLink(String link) {
         this.link = link;
     }
+
 }

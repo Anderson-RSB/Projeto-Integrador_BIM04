@@ -20,28 +20,28 @@ public class ImageController {
 
     @GetMapping
     public ResponseEntity<List<ImageDto>> searchAllImages() {
-        List<ImageDto> list = imageService.searchAll();
-        return ResponseEntity.ok().body(list);
+        List<ImageDto> imageDtoList = imageService.searchAll();
+        return ResponseEntity.ok().body(imageDtoList);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<ImageDto> searchImageById(@PathVariable Integer id) {
-        ImageDto dto = imageService.searchById(id);
-        return ResponseEntity.ok().body(dto);
+        ImageDto imageDto = imageService.searchById(id);
+        return ResponseEntity.ok().body(imageDto);
     }
 
     @PostMapping
-    public ResponseEntity<ImageDto> insertImage(@RequestBody ImageDto dto) {
-        dto = imageService.insert(dto);
+    public ResponseEntity<ImageDto> insertImage(@RequestBody ImageDto imageDto) {
+        imageDto = imageService.insert(imageDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dto.getId()).toUri();
-        return ResponseEntity.created(uri).body(dto);
+                .buildAndExpand(imageDto.getId()).toUri();
+        return ResponseEntity.created(uri).body(imageDto);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ImageDto> updateImage(@PathVariable Integer id, @RequestBody ImageDto dto) {
-        dto = imageService.update(id, dto);
-        return ResponseEntity.ok().body(dto);
+    public ResponseEntity<ImageDto> updateImage(@PathVariable Integer id, @RequestBody ImageDto imageDto) {
+        imageDto = imageService.update(id, imageDto);
+        return ResponseEntity.ok().body(imageDto);
     }
 
     @DeleteMapping(value = "/{id}")

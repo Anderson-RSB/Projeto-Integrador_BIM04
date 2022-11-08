@@ -32,8 +32,8 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryDto> searchAll() {
         try {
-            List<Category> list = categoryRepository.findAll();
-            return list.stream().map(x -> new CategoryDto(x)).collect(Collectors.toList());
+            List<Category> categoryList = categoryRepository.findAll();
+            return categoryList.stream().map(x -> new CategoryDto(x)).collect(Collectors.toList());
         } catch (EntityNotFoundException e) {
             throw new DatabaseCarException(
                     "Registros não encontrados!"
@@ -44,28 +44,28 @@ public class CategoryService {
     // SearchById
     @Transactional(readOnly = true)
     public CategoryDto searchById(Integer id) {
-        Optional<Category> object = categoryRepository.findById(id);
-        Category entity = object.orElseThrow(() -> new EntityCarNotFoundException("Registro: " + id + " não encontrado!"));
-        return new CategoryDto(entity);
+        Optional<Category> objectCategory = categoryRepository.findById(id);
+        Category category = objectCategory.orElseThrow(() -> new EntityCarNotFoundException("Registro: " + id + " não encontrado!"));
+        return new CategoryDto(category);
     }
 
     // Insert
     @Transactional
-    public CategoryDto insert(CategoryDto dto) {
-        Category entity = new Category();
-        copyDtoForEntity(dto, entity);
-        entity = categoryRepository.save(entity);
-        return new CategoryDto(entity);
+    public CategoryDto insert(CategoryDto categoryDto) {
+        Category category = new Category();
+        copyDtoForEntity(categoryDto, category);
+        category = categoryRepository.save(category);
+        return new CategoryDto(category);
     }
 
     // Update
     @Transactional
-    public CategoryDto update(Integer id, CategoryDto dto) {
+    public CategoryDto update(Integer id, CategoryDto categoryDto) {
         try {
-            Category entity = categoryRepository.getReferenceById(id);
-            copyDtoForEntity(dto, entity);
-            entity = categoryRepository.save(entity);
-            return new CategoryDto(entity);
+            Category category = categoryRepository.getReferenceById(id);
+            copyDtoForEntity(categoryDto, category);
+            category = categoryRepository.save(category);
+            return new CategoryDto(category);
         } catch (EntityNotFoundException e) {
             throw new DatabaseCarException(
                     "Registro " + id + " não encontrado!"
@@ -76,7 +76,15 @@ public class CategoryService {
     // Delete
     public void delete(Integer id) {
         try {
-            categoryRepository.deleteById(id);
+            Category categoryReturn = categoryRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+            categoryReturn.getProducts().clear();
+            List<Product> productList = productRepository.findAllProductsByCategoryId(id);
+            for (Product product : productList) {
+                product.setCategory(null);
+            }
+            productRepository.saveAll(productList);
+            categoryRepository.saveAndFlush(categoryReturn);
+            categoryRepository.delete(categoryReturn);
         } catch (EmptyResultDataAccessException e) {
             throw new EntityCarNotFoundException(
                     "Exclusão não realizada! Registro " + id + " não encontrado!"
@@ -88,15 +96,15 @@ public class CategoryService {
         }
     }
 
-    private void copyDtoForEntity(CategoryDto dto, Category entity) {
-        entity.setQualification(dto.getQualification());
-        entity.setDescription(dto.getDescription());
-        entity.setUrlImage(dto.getUrlImage());
+    private void copyDtoForEntity(CategoryDto categoryDto, Category category) {
+        category.setQualification(categoryDto.getQualification());
+        category.setDescription(categoryDto.getDescription());
+        category.setUrlImage(categoryDto.getUrlImage());
 
-        entity.getProducts().clear();
-        for (ProductDto productDto : dto.getProducts()) {
+        category.getProducts().clear();
+        for (ProductDto productDto : categoryDto.getProducts()) {
             Product product = productRepository.getReferenceById(productDto.getId());
-            entity.getProducts().add(product);
+            category.getProducts().add(product);
         }
     }
 

@@ -29,13 +29,13 @@ public class Product implements Serializable {
     private List<Feature> features = new ArrayList<>();
 
     // Relacionamento @ManyToOne entre as entidades Category e Product
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_category")
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "id_category", nullable = true)
     private Category category;
 
     // Relacionamento @ManyToOne entre as entidades City e Product
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_city")
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "id_city", nullable = true)
     private City city;
 
     // Construtor padrão

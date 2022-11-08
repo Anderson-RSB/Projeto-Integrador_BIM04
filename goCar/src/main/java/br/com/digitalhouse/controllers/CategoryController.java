@@ -20,28 +20,28 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryDto>> searchAllCategories() {
-        List<CategoryDto> list = categoryService.searchAll();
-        return ResponseEntity.ok().body(list);
+        List<CategoryDto> categoryDtoList = categoryService.searchAll();
+        return ResponseEntity.ok().body(categoryDtoList);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<CategoryDto> searchCategoryById(@PathVariable Integer id) {
-        CategoryDto dto = categoryService.searchById(id);
-        return ResponseEntity.ok().body(dto);
+        CategoryDto categoryDto = categoryService.searchById(id);
+        return ResponseEntity.ok().body(categoryDto);
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> insertCategory(@RequestBody CategoryDto dto) {
-        dto = categoryService.insert(dto);
+    public ResponseEntity<CategoryDto> insertCategory(@RequestBody CategoryDto categoryDto) {
+        categoryDto = categoryService.insert(categoryDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dto.getId()).toUri();
-        return ResponseEntity.created(uri).body(dto);
+                .buildAndExpand(categoryDto.getId()).toUri();
+        return ResponseEntity.created(uri).body(categoryDto);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CategoryDto> updateCategory(@PathVariable Integer id, @RequestBody CategoryDto dto) {
-        dto = categoryService.update(id, dto);
-        return ResponseEntity.ok().body(dto);
+    public ResponseEntity<CategoryDto> updateCategory(@PathVariable Integer id, @RequestBody CategoryDto categoryDto) {
+        categoryDto = categoryService.update(id, categoryDto);
+        return ResponseEntity.ok().body(categoryDto);
     }
 
     @DeleteMapping(value = "/{id}")

@@ -1,9 +1,12 @@
 package br.com.digitalhouse.entities;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table
@@ -17,8 +20,9 @@ public class City implements Serializable {
     private String country;
 
     // Relacionamento @OneToMany entre as entidades City e Product
-    @OneToMany(mappedBy = "city", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Product> products = new ArrayList<>();
+    @OneToMany(mappedBy = "city", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    private Set<Product> products = new HashSet<>();
 
     // Construtor padrão
     public City() {
@@ -56,11 +60,11 @@ public class City implements Serializable {
         this.country = country;
     }
 
-    public List<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
+    public void setProducts(Set<Product> products) {
         this.products = products;
     }
 

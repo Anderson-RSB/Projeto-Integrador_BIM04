@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.PreRemove;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,8 +33,8 @@ public class CityService {
     @Transactional(readOnly = true)
     public List<CityDto> searchAll() {
         try {
-            List<City> list = cityRepository.findAll();
-            return list.stream().map(x -> new CityDto(x)).collect(Collectors.toList());
+            List<City> cityList = cityRepository.findAll();
+            return cityList.stream().map(x -> new CityDto(x)).collect(Collectors.toList());
         } catch (EntityNotFoundException e) {
             throw new DatabaseCarException(
                     "Registros não encontrados!"
@@ -44,28 +45,28 @@ public class CityService {
     // SearchById
     @Transactional(readOnly = true)
     public CityDto searchById(Integer id) {
-        Optional<City> object = cityRepository.findById(id);
-        City entity = object.orElseThrow(() -> new EntityCarNotFoundException("Registro: " + id + " não encontrado!"));
-        return new CityDto(entity);
+        Optional<City> objectCity = cityRepository.findById(id);
+        City city = objectCity.orElseThrow(() -> new EntityCarNotFoundException("Registro: " + id + " não encontrado!"));
+        return new CityDto(city);
     }
 
     // Insert
     @Transactional
-    public CityDto insert(CityDto dto) {
-        City entity = new City();
-        copyDtoForEntity(dto, entity);
-        entity = cityRepository.save(entity);
-        return new CityDto(entity);
+    public CityDto insert(CityDto cityDto) {
+        City city = new City();
+        copyDtoForEntity(cityDto, city);
+        city = cityRepository.save(city);
+        return new CityDto(city);
     }
 
     // Update
     @Transactional
-    public CityDto update(Integer id, CityDto dto) {
+    public CityDto update(Integer id, CityDto cityDto) {
         try {
-            City entity = cityRepository.getReferenceById(id);
-            copyDtoForEntity(dto, entity);
-            entity = cityRepository.save(entity);
-            return new CityDto(entity);
+            City city = cityRepository.getReferenceById(id);
+            copyDtoForEntity(cityDto, city);
+            city = cityRepository.save(city);
+            return new CityDto(city);
         } catch (EntityNotFoundException e) {
             throw new DatabaseCarException(
                     "Registro " + id + " não encontrado!"
@@ -74,9 +75,19 @@ public class CityService {
     }
 
     // Delete
+    @PreRemove
     public void delete(Integer id) {
         try {
-            cityRepository.deleteById(id);
+            City cityReturn = cityRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+            cityReturn.getProducts().clear();
+            List<Product> productList = productRepository.findAllProductsByCityId(id);
+            for (Product product : productList) {
+                product.setCity(null);
+            }
+            productRepository.saveAll(productList);
+            cityRepository.saveAndFlush(cityReturn);
+            cityRepository.delete(cityReturn);
+//            cityRepository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             throw new EntityCarNotFoundException(
                     "Exclusão não realizada! Registro " + id + " não encontrado!"
@@ -88,14 +99,14 @@ public class CityService {
         }
     }
 
-    private void copyDtoForEntity(CityDto dto, City entity) {
-        entity.setName(dto.getName());
-        entity.setCountry(dto.getCountry());
+    private void copyDtoForEntity(CityDto cityDto, City city) {
+        city.setName(cityDto.getName());
+        city.setCountry(cityDto.getCountry());
 
-        entity.getProducts().clear();
-        for (ProductDto productDto : dto.getProducts()) {
+        city.getProducts().clear();
+        for (ProductDto productDto : cityDto.getProducts()) {
             Product product = productRepository.getReferenceById(productDto.getId());
-            entity.getProducts().add(product);
+            city.getProducts().add(product);
         }
     }
 

@@ -26,8 +26,8 @@ public class ImageService {
     @Transactional(readOnly = true)
     public List<ImageDto> searchAll() {
         try {
-            List<Image> list = imageRepository.findAll();
-            return list.stream().map(x -> new ImageDto(x)).collect(Collectors.toList());
+            List<Image> imageList = imageRepository.findAll();
+            return imageList.stream().map(x -> new ImageDto(x)).collect(Collectors.toList());
         } catch (EntityNotFoundException e) {
             throw new DatabaseCarException(
                     "Registros não encontrados!"
@@ -38,28 +38,28 @@ public class ImageService {
     // SearchById
     @Transactional(readOnly = true)
     public ImageDto searchById(Integer id) {
-        Optional<Image> object = imageRepository.findById(id);
-        Image entity = object.orElseThrow(() -> new EntityCarNotFoundException("Registro: " + id + " não encontrado!"));
-        return new ImageDto(entity);
+        Optional<Image> objectImage = imageRepository.findById(id);
+        Image image = objectImage.orElseThrow(() -> new EntityCarNotFoundException("Registro: " + id + " não encontrado!"));
+        return new ImageDto(image);
     }
 
     // Insert
     @Transactional
-    public ImageDto insert(ImageDto dto) {
-        Image entity = new Image();
-        copyDtoForEntity(dto, entity);
-        entity = imageRepository.save(entity);
-        return new ImageDto(entity);
+    public ImageDto insert(ImageDto imageDto) {
+        Image image = new Image();
+        copyDtoForEntity(imageDto, image);
+        image = imageRepository.save(image);
+        return new ImageDto(image);
     }
 
     // Update
     @Transactional
-    public ImageDto update(Integer id, ImageDto dto) {
+    public ImageDto update(Integer id, ImageDto imageDto) {
         try {
-            Image entity = imageRepository.getReferenceById(id);
-            copyDtoForEntity(dto, entity);
-            entity = imageRepository.save(entity);
-            return new ImageDto(entity);
+            Image image = imageRepository.getReferenceById(id);
+            copyDtoForEntity(imageDto, image);
+            image = imageRepository.save(image);
+            return new ImageDto(image);
         } catch (EntityNotFoundException e) {
             throw new DatabaseCarException(
                     "Registro " + id + " não encontrado!"
@@ -83,9 +83,9 @@ public class ImageService {
         }
     }
 
-    private void copyDtoForEntity(ImageDto dto, Image entity) {
-        entity.setTitle(dto.getTitle());
-        entity.setUrlImage(dto.getUrlImage());
+    private void copyDtoForEntity(ImageDto imageDto, Image image) {
+        image.setTitle(imageDto.getTitle());
+        image.setUrlImage(imageDto.getUrlImage());
     }
 
 }

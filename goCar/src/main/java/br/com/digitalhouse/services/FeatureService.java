@@ -26,8 +26,8 @@ public class FeatureService {
     @Transactional(readOnly = true)
     public List<FeatureDto> searchAll() {
         try {
-            List<Feature> list = featureRepository.findAll();
-            return list.stream().map(x -> new FeatureDto(x)).collect(Collectors.toList());
+            List<Feature> featureList = featureRepository.findAll();
+            return featureList.stream().map(x -> new FeatureDto(x)).collect(Collectors.toList());
         } catch (EntityNotFoundException e) {
             throw new DatabaseCarException(
                     "Registros não encontrados!"
@@ -38,28 +38,28 @@ public class FeatureService {
     // SearchById
     @Transactional(readOnly = true)
     public FeatureDto searchById(Integer id) {
-        Optional<Feature> object = featureRepository.findById(id);
-        Feature entity = object.orElseThrow(() -> new EntityCarNotFoundException("Registro: " + id + " não encontrado!"));
-        return new FeatureDto(entity);
+        Optional<Feature> objectFeature = featureRepository.findById(id);
+        Feature feature = objectFeature.orElseThrow(() -> new EntityCarNotFoundException("Registro: " + id + " não encontrado!"));
+        return new FeatureDto(feature);
     }
 
     // Insert
     @Transactional
-    public FeatureDto insert(FeatureDto dto) {
-        Feature entity = new Feature();
-        copyDtoForEntity(dto, entity);
-        entity = featureRepository.save(entity);
-        return new FeatureDto(entity);
+    public FeatureDto insert(FeatureDto featureDto) {
+        Feature feature = new Feature();
+        copyDtoForEntity(featureDto, feature);
+        feature = featureRepository.save(feature);
+        return new FeatureDto(feature);
     }
 
     // Update
     @Transactional
-    public FeatureDto update(Integer id, FeatureDto dto) {
+    public FeatureDto update(Integer id, FeatureDto featureDto) {
         try {
-            Feature entity = featureRepository.getReferenceById(id);
-            copyDtoForEntity(dto, entity);
-            entity = featureRepository.save(entity);
-            return new FeatureDto(entity);
+            Feature feature = featureRepository.getReferenceById(id);
+            copyDtoForEntity(featureDto, feature);
+            feature = featureRepository.save(feature);
+            return new FeatureDto(feature);
         } catch (EntityNotFoundException e) {
             throw new DatabaseCarException(
                     "Registro " + id + " não encontrado!"
@@ -82,9 +82,9 @@ public class FeatureService {
         }
     }
 
-    private void copyDtoForEntity(FeatureDto dto, Feature entity) {
-        entity.setName(dto.getName());
-        entity.setIcon(dto.getIcon());
+    private void copyDtoForEntity(FeatureDto featureDto, Feature feature) {
+        feature.setName(featureDto.getName());
+        feature.setIcon(featureDto.getIcon());
     }
 
 }

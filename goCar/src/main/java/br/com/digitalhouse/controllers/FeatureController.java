@@ -20,28 +20,28 @@ public class FeatureController {
 
     @GetMapping
     public ResponseEntity<List<FeatureDto>> searchAllFeatures() {
-        List<FeatureDto> list = featureService.searchAll();
-        return ResponseEntity.ok().body(list);
+        List<FeatureDto> featureDtoList = featureService.searchAll();
+        return ResponseEntity.ok().body(featureDtoList);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<FeatureDto> searchFeatureById(@PathVariable Integer id) {
-        FeatureDto dto = featureService.searchById(id);
-        return ResponseEntity.ok().body(dto);
+        FeatureDto featureDto = featureService.searchById(id);
+        return ResponseEntity.ok().body(featureDto);
     }
 
     @PostMapping
-    public ResponseEntity<FeatureDto> insertFeature(@RequestBody FeatureDto dto) {
-        dto = featureService.insert(dto);
+    public ResponseEntity<FeatureDto> insertFeature(@RequestBody FeatureDto featureDto) {
+        featureDto = featureService.insert(featureDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dto.getId()).toUri();
-        return ResponseEntity.created(uri).body(dto);
+                .buildAndExpand(featureDto.getId()).toUri();
+        return ResponseEntity.created(uri).body(featureDto);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<FeatureDto> updateFeature(@PathVariable Integer id, @RequestBody FeatureDto dto) {
-        dto = featureService.update(id, dto);
-        return ResponseEntity.ok().body(dto);
+    public ResponseEntity<FeatureDto> updateFeature(@PathVariable Integer id, @RequestBody FeatureDto featureDto) {
+        featureDto = featureService.update(id, featureDto);
+        return ResponseEntity.ok().body(featureDto);
     }
 
     @DeleteMapping(value = "/{id}")
